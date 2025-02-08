@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   pgdatabase:
     image: postgres
@@ -9,30 +7,37 @@ services:
       POSTGRES_PASSWORD: 123456
       POSTGRES_DB: energy_consumption
     ports:
-    - "5432:5432"
+      - "5432:5432"
     volumes:
-    - etl_energy_consumption:/var/lib/postgres/data
+      - etl_energy_consumption:/var/lib/postgres/data
     networks:
       - energy_consumption_network
+
   pgadmin:
     image: dpage/pgadmin4
     restart: always
     environment:
-    - PGADMIN_DEFAULT_EMAIL: "admin@localhost"
-    - PGADMIN_DEFAULT_PASSWORD: root
+      PGADMIN_DEFAULT_EMAIL: "admin@localhost"
+      PGADMIN_DEFAULT_PASSWORD: "root"
     ports:
-    - "5050:80"
+      - "5050:80"
     volumes:
-    - etl_energy_consumption:/var/lib/postgres/data
-    depends_on:  
-    - pgdatabase
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - pgdatabase
+    networks:
+      - energy_consumption_network
+  etl:
+    build: .
+    restart: on-failure
+    depends_on:
+      - pgdatabase
     networks:
       - energy_consumption_network
 
 volumes:
   etl_energy_consumption:
+  pgadmin-data:
 
 networks:
   energy_consumption_network:
-  external: true #for let anything outside compose can connect with this networks
-    

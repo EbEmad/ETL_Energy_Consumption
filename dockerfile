@@ -1,13 +1,15 @@
 FROM python:3.8
 
-
 WORKDIR /app
 
-COPY reqirements.txt reqirements.txt 
-RUN pip install -r reqirements.txt 
+# Copy the correct requirements.txt file
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
 
-COPY etl/ /etl
+# Ensure the correct paths
+COPY ETL/ /app/etl
+COPY data/ /app/data
+COPY wait-for-postgres.sh /app/wait-for-postgres.sh
+RUN chmod +x /app/wait-for-postgres.sh
 
-COPY data/ /data
-
-ENTRYPOINT [ "python","/etl/load.py" ]
+ENTRYPOINT [ "/app/wait-for-postgres.sh", "pgdatabase", "python", "/app/etl/load.py" ]

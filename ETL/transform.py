@@ -3,7 +3,7 @@ import pandas as pd
 
 def transform_data(data):
     #remove unnecessary data
-    data.drop(data.iloc[:,2:44],implace=True,axis=1)
+    data.drop(data.iloc[:, 2:44], inplace=True, axis=1)
     
     # remove missing values
     data_clean=data.dropna()
@@ -21,6 +21,3 @@ def transform_data(data):
 
     data_new=data_clean.join(new_consumption_dataframe)
     return data_new
-
-
-    
